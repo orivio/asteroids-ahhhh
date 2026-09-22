@@ -45,6 +45,36 @@ class spaceship:
     def points(self):
         return[self.pos + p.rotate(self.angle) for p in self.basetri]
 
+class square_alien:
+    def __init__(self, x, y):
+        self.pos = pygame.math.Vector2(x, y)
+        self.angle = 0
+        self.detected = False
+    def forward(self):
+        return pygame.math.Vector2(math.cos(self.angle), -math.sin(self.angle))
+    def track(self, player):
+        player_dist = (player.pos - self.pos).normalize()
+        self_forward = self.forward()
+        dot = self_forward.dot(player_dist)
+
+        in_fov = False
+        if dot > 0.7:
+            in_fov = True
+
+        distance = self.position.distance_to(player.pos)
+        in_dist = False
+        if distance < 100:
+            in_dist = True
+
+        if in_dist and in_fov:
+            self.detected = True
+        else:
+            self.detected = False
+   # def chase(self):
+       # if self.detected == True:
+#^need to test
+
+
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
 ship = spaceship()
 for ast in asteroids:
