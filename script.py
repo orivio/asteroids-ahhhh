@@ -32,7 +32,7 @@ for ast in asteroids:
 
 while gameloop:
     for event in pygame.event.get():
-        if event == pygame.QUIT:
+        if event.type == pygame.QUIT:
             gameloop = False
     screen.fill((54, 33, 12))
     for asteroid in asteroids:
