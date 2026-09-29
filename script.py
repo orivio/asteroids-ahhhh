@@ -21,10 +21,9 @@ class spaceship:
         self.hitbox = pygame.Rect(self.pos.x - 9, self.pos.y, 20, 20)
         self.dir = pygame.math.Vector2(0, 1)
         self.basetri = [
-        (self.pos.x, self.pos.y - 15),
-        (self.pos.x - 15, self.pos.y + 25),
-        (self.pos.x + 15, self.pos.y + 25)] #TODO: MAKE THESE VECTORS
-
+        pygame.math.Vector2(self.pos.x, self.pos.y - 15),
+        pygame.math.Vector2(self.pos.x - 15, self.pos.y + 25),
+        pygame.math.Vector2(self.pos.x + 15, self.pos.y + 25)]
 gameloop = True
 
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
@@ -42,6 +41,8 @@ while gameloop:
         if event.type == pygame.QUIT:
             gameloop = False
 
+    screen.fill((0, 0, 0))
+
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]: #keys inpuits
         newplist = []
@@ -50,7 +51,6 @@ while gameloop:
             new = ship.pos + rotated
             newplist.append(new) #test
         pygame.draw.polygon(screen, (150, 147, 147), newplist)
-    screen.fill((54, 33, 12))
     for asteroid in asteroids:
         pygame.draw.circle(screen, ((88, 149, 173)), (asteroid.vec.x, asteroid.vec.y), asteroid.radius)
         asteroid.vec += asteroid.vecmove
