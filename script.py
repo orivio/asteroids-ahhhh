@@ -17,6 +17,7 @@ class asteroid:
 class spaceship:
     def __init__(self):
         self.pos = pygame.math.Vector2(300, 200)
+        self.hitbox = pygame.Rect(self.pos.x - 9, self.pos.y, 20, 20)
 
 gameloop = True
 
@@ -50,7 +51,11 @@ while gameloop:
                 if asteroid.vecmove == 0:
                     asteroid.vecmove += pygame.math.Vector2(1, 1)
                 asteroid.vecmove = asteroid.vecmove.normalize() * 2
-    pygame.draw.rect(screen, ((0, 0, 0)), pygame.Rect(ship.pos.x + -15, ship.pos.y - 15, 30, 30))
+    pygame.draw.polygon(screen, (150, 147, 147), [
+        (ship.pos.x, ship.pos.y - 15),
+        (ship.pos.x - 15, ship.pos.y + 25),
+        (ship.pos.x + 15, ship.pos.y + 25)
+    ])
 
     
     clock.tick(30)
