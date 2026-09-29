@@ -49,7 +49,7 @@ while gameloop:
                     asteroid.vecmove = asteroid.vecmove - other.vecmove
                     other.vecmove = other.vecmove + asteroid.vecmove
                 if asteroid.vecmove == 0:
-                    asteroid.vecmove += pygame.math.Vector2(1, 1)
+                    asteroid.vecmove = pygame.math.Vector2(1, 1)
                 asteroid.vecmove = asteroid.vecmove.normalize() * 2
     pygame.draw.polygon(screen, (150, 147, 147), [
         (ship.pos.x, ship.pos.y - 15),
