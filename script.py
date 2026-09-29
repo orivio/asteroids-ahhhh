@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 
 pygame.init()
@@ -18,6 +19,7 @@ class spaceship:
     def __init__(self):
         self.pos = pygame.math.Vector2(300, 200)
         self.hitbox = pygame.Rect(self.pos.x - 9, self.pos.y, 20, 20)
+        self.dir = pygame.math.Vector2(0, 1)
 
 gameloop = True
 
@@ -35,6 +37,12 @@ while gameloop:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameloop = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]: #keys inpuits
+        temp = math.asin(ship.dir.x)
+        temp -= 5
+        ship.dir = pygame.math.Vector2(math.cos(temp), math.sin(temp))
     screen.fill((54, 33, 12))
     for asteroid in asteroids:
         pygame.draw.circle(screen, ((88, 149, 173)), (asteroid.vec.x, asteroid.vec.y), asteroid.radius)
