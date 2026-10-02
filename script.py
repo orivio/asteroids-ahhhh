@@ -25,6 +25,22 @@ class spaceship:
         pygame.math.Vector2(0, -15),
         pygame.math.Vector2(-15, 20),
         pygame.math.Vector2(15, 20)]
+        self.vel = pygame.math.Vector2(0, 0)
+        self.accel = 0.15
+        self.drag = 0.99
+        self.speedlim = 6
+
+    def forward(self):
+        return pygame.math.Vector2(0, -1).rotate(self.angle)
+
+    def update(self, thrust):
+        if thrust:
+            self.vel += self.accel * self.forward()
+            if self.vel.length() > self.speedlim:
+                self.vel.scale_to_length(self.speedlim)
+        self.vel *= self.drag
+        self.pos += self.vel
+        self.hitbox.center = self.pos
 
     def points(self):
         return[self.pos + p.rotate(self.angle) for p in self.basetri]
@@ -52,6 +68,10 @@ while gameloop:
         ship.angle -= 5
     if keys[pygame.K_RIGHT]:
         ship.angle += 5
+    if keys[pygame.K_UP]:
+        ship.update(True)
+    elif not keys[pygame.K_UP]:
+        ship.vel *= 0.2
 
     pygame.draw.polygon(screen, (150, 147, 147), ship.points())
 
