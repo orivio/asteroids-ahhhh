@@ -50,10 +50,20 @@ class square_alien:
         self.pos = pygame.math.Vector2(x, y)
         self.angle = 0
         self.detected = False
+        self.chase_speed = 1.3
+        self.ambient_speed = 1
+        self.viewrange = 150
+        self.ignore_timer = 0
+        self.turn = 0.03
+
     def forward(self):
         return pygame.math.Vector2(math.cos(self.angle), -math.sin(self.angle))
     def track(self, player):
-        player_dist = (player.pos - self.pos).normalize()
+        player_dist = (player.pos - self.pos)
+        distance = player_dist.length()
+        if distance == 0:
+            return
+        player_dir = player_dist/distance
         self_forward = self.forward()
         dot = self_forward.dot(player_dist)
 
@@ -61,28 +71,37 @@ class square_alien:
         if dot > 0.7:
             in_fov = True
 
-        distance = self.position.distance_to(player.pos)
+        distance = self.pos.distance_to(player.pos)
         in_dist = False
-        if distance < 100:
+        if distance < self.viewrange:
             in_dist = True
 
         if in_dist and in_fov:
             self.detected = True
+            self.ignore_timer = 90
+        elif self.ignore_timer > 0:
+            self.ignore_timer -= 1
         else:
             self.detected = False
-   # def chase(self):
-       # if self.detected == True:
+
+        if self.detected == True:
+            self.angle = math.atan2(-player_dir.y, player_dir.x)
+            self.pos += player_dir * self.chase_speed
+        else:
+            if random.random() < 0.03:
+                self.turn = random.uniform(-0.05, 0.05)
+                self.angle += self.turn
+                self.pos += self.forward() * self.ambient_speed
+            if not (20 < self.pos.x < 580 and 20 < self.pos.y < 380):
+                dist_center = pygame.math.Vector2(300, 200) - self.pos
+                self.angle = math.atan2(-dist_center.y, dist_center.x)
+
 #^need to test
 
 
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
+enemies = [square_alien(100, 200)]
 ship = spaceship()
-for ast in asteroids:
-    for other in asteroids:
-        if ast.vec == other.vec:
-            ast = asteroid()
-        if ast.id == other.id:
-            ast = asteroid()
 
 gameloop = True
 
@@ -123,13 +142,11 @@ while gameloop:
                         asteroid.vecmove -= vecdif * spd
                         other.vecmove += vecdif * spd
 
-                
-
-        
-
+    for enemy in enemies:
+        enemy.track(ship)
+        pygame.draw.rect(screen, ((88, 149, 173)), (enemy.pos.x - 30, enemy.pos.y - 30, 30, 30))
     
     clock.tick(30)
     pygame.display.flip()
-
 
 pygame.quit()
