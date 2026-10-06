@@ -96,12 +96,14 @@ class square_alien:
                 dist_center = pygame.math.Vector2(300, 200) - self.pos
                 self.angle = math.atan2(-dist_center.y, dist_center.x)
 
-#^need to test
-
+class bullet:
+    def __init__(self, player):
+        self.vec = player.forward() * 2
 
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
 enemies = [square_alien(100, 200)]
 ship = spaceship()
+bullets = []
 
 gameloop = True
 
@@ -117,6 +119,8 @@ while gameloop:
         ship.angle -= 5
     if keys[pygame.K_RIGHT]:
         ship.angle += 5
+    if keys[pygame.K_f]:
+        bullets.append(bullet(ship))
     if keys[pygame.K_UP]:
         ship.update(True)
     elif not keys[pygame.K_UP]:
@@ -145,6 +149,10 @@ while gameloop:
     for enemy in enemies:
         enemy.track(ship)
         pygame.draw.rect(screen, ((88, 149, 173)), (enemy.pos.x - 30, enemy.pos.y - 30, 30, 30))
+
+    for bull in bullets:
+
+        pygame.draw.circle(screen, (0, 255, 0), (bull.vec.x, bull.vec.y), 1)
     
     clock.tick(30)
     pygame.display.flip()
