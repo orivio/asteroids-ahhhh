@@ -4,7 +4,9 @@ import math
 
 
 pygame.init()
-screen = pygame.display.set_mode((600, 400))
+WIDTH = 600
+HEIGHT = 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
 
@@ -153,6 +155,16 @@ while gameloop:
     for bull in bullets:
 
         pygame.draw.circle(screen, (0, 255, 0), (bull.vec.x, bull.vec.y), 1)
+
+    if ship.pos.x > WIDTH:
+        ship.pos.x = 0
+    elif ship.pos.x < 0:
+        ship.pos.x = WIDTH
+    if ship.pos.y > HEIGHT:
+        ship.pos.y = 0
+    elif ship.pos.y < 0:
+        ship.pos.y = HEIGHT
+
     
     clock.tick(30)
     pygame.display.flip()
