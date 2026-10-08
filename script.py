@@ -110,14 +110,11 @@ class GameManager:
         self.bull_cd = 30
 
 class bullet:
-
     def __init__(self, player):
         self.vec = player.forward() * 2
         self.pos = pygame.math.Vector2(player.pos)
     def update(self, mgnr):
         self.pos += self.vec
-        if mgnr.bull_cd > 0:
-            mgnr.upd()
         if mgnr.bull_cd == 0:
             pass
         #elif bullet.bull_cd <= 0:
@@ -180,6 +177,8 @@ while gameloop:
     for bull in bullets:
         bull.update(manager)
         pygame.draw.circle(screen, (0, 255, 0), (bull.pos.x, bull.pos.y), 3)
+    if manager.bull_cd > 0:
+        manager.upd()
 
     if ship.pos.x > WIDTH:
         ship.pos.x = 0
