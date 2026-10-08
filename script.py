@@ -99,22 +99,35 @@ class square_alien:
                 self.angle = math.atan2(-dist_center.y, dist_center.x)
 
 
+class GameManager:
+    def __init__(self):
+        self.bull_cd = 0
+    def upd(self):
+        self.bull_cd -= 1
+    def bull_zero(self):
+        self.bull_cd = 0
+    def bull_reset(self):
+        self.bull_cd = 30
+
 class bullet:
-    bull_cd = 20
+
     def __init__(self, player):
         self.vec = player.forward() * 2
         self.pos = pygame.math.Vector2(player.pos)
-    def update(self):
+    def update(self, mgnr):
         self.pos += self.vec
-        #if bullet.bull_cd > 0:
-        bullet.bull_cd -= 1
-      #  elif bullet.bull_cd == 0:
-       #     bullet.bull_cd = 0
-
+        if mgnr.bull_cd > 0:
+            mgnr.upd()
+        if mgnr.bull_cd == 0:
+            pass
+        #elif bullet.bull_cd <= 0:
+         #   bullet.bull_cd = -1
+        
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
 enemies = [square_alien(100, 200)]
 ship = spaceship()
 bullets = []
+manager = GameManager()
 
 gameloop = True
 
@@ -131,10 +144,10 @@ while gameloop:
     if keys[pygame.K_RIGHT]:
         ship.angle += 5
     if keys[pygame.K_f]:
-        if bullet.bull_cd <= 0: #for some reason this is never true
-            print("ohd")
+        print (manager.bull_cd)
+        if manager.bull_cd <= 0:
             bullets.append(bullet(ship))
-            bullet.bull_cd = 200
+            manager.bull_reset()
     if keys[pygame.K_UP]:
         ship.update(True)
     elif not keys[pygame.K_UP]:
@@ -165,7 +178,7 @@ while gameloop:
         pygame.draw.rect(screen, ((88, 149, 173)), (enemy.pos.x - 30, enemy.pos.y - 30, 30, 30))
 
     for bull in bullets:
-        bull.update() #maybe move out of for loop?
+        bull.update(manager)
         pygame.draw.circle(screen, (0, 255, 0), (bull.pos.x, bull.pos.y), 3)
 
     if ship.pos.x > WIDTH:
