@@ -107,11 +107,11 @@ class GameManager:
     def bull_zero(self):
         self.bull_cd = 0
     def bull_reset(self):
-        self.bull_cd = 30
+        self.bull_cd = 10
 
 class bullet:
     def __init__(self, player):
-        self.vec = player.forward() * 2
+        self.vec = player.forward() * 5
         self.pos = pygame.math.Vector2(player.pos)
     def update(self, mgnr):
         self.pos += self.vec
@@ -152,22 +152,28 @@ while gameloop:
 
     pygame.draw.polygon(screen, (150, 147, 147), ship.points())
 
-    for asteroid in asteroids:
-        pygame.draw.circle(screen, ((88, 149, 173)), (asteroid.vec.x, asteroid.vec.y), asteroid.radius)
-        asteroid.vec += asteroid.vecmove
-        if asteroid.vec.x + asteroid.radius > 600 or 0 > asteroid.vec.x - asteroid.radius:
-            asteroid.vecmove.x *= -1 
-        if asteroid.vec.y + asteroid.radius > 400 or 0 > asteroid.vec.y - asteroid.radius:
-            asteroid.vecmove.y *= -1
+    for i, ast in enumerate(asteroids):
+        pygame.draw.circle(screen, ((88, 149, 173)), (ast.vec.x, ast.vec.y), ast.radius)
+        ast.vec += ast.vecmove
+        if ast.vec.x + ast.radius > 600 or 0 > ast.vec.x - ast.radius:
+            ast.vecmove.x *= -1 
+        if ast.vec.y + ast.radius > 400 or 0 > ast.vec.y - ast.radius:
+            ast.vecmove.y *= -1
+
+        for bull in bullets:
+            dif = ast.vec - bull.pos
+            if ast.radius >= dif.length():
+                asteroids[i] = asteroid()
+                bullets.remove(bull)
             
         for other in asteroids:
-            if other.id != asteroid.id:
-                vecdif = other.vec - asteroid.vec
-                if 0 < vecdif.length() <= asteroid.radius + other.radius:
+            if other.id != ast.id:
+                vecdif = other.vec - ast.vec
+                if 0 < vecdif.length() <= ast.radius + other.radius:
                     vecdif = vecdif.normalize()
-                    spd = (asteroid.vecmove - other.vecmove).dot(vecdif)
+                    spd = (ast.vecmove - other.vecmove).dot(vecdif)
                     if spd > 0:
-                        asteroid.vecmove -= vecdif * spd
+                        ast.vecmove -= vecdif * spd
                         other.vecmove += vecdif * spd
 
     for enemy in enemies:
