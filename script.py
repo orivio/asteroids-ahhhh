@@ -103,12 +103,19 @@ class square_alien:
 class GameManager:
     def __init__(self):
         self.bull_cd = 0
+        self.hit_cd = 50
     def upd(self):
         self.bull_cd -= 1
+    def activate_hittimer(self):
+        self.hit_cd -= 1
     def bull_zero(self):
         self.bull_cd = 0
+    def hit_zero(self):
+        self.hit_cd = 0
     def bull_reset(self):
         self.bull_cd = 10
+    def hit_reset(self):
+        self.hit_cd = 50
 
 class bullet:
     def __init__(self, player):
@@ -128,7 +135,6 @@ manager = GameManager()
 gameloop = True
 
 while gameloop:
-    print(ship.hits)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameloop = False
@@ -161,7 +167,9 @@ while gameloop:
 
         pos_dif = ship.pos - ast.vec
         if pos_dif.length() <= ast.radius + ship.hitbox.width:
-            ship.hits -= 1
+            if manager.hit_cd <= 0:
+                ship.hits -= 1
+                manager.hit_reset()
 
         for bull in bullets:
             dif = ast.vec - bull.pos
@@ -184,7 +192,9 @@ while gameloop:
         guy = pygame.Rect(enemy.pos.x - 30, enemy.pos.y - 30, 30, 30)
         pygame.draw.rect(screen, ((88, 149, 173)), guy)
         if guy.colliderect(ship.hitbox):
-            ship.hits -= 1
+            if manager.hit_cd <= 0:
+                ship.hits -= 1
+                manager.hit_reset()
 
     for bull in bullets:
         bull.update(manager)
@@ -201,6 +211,9 @@ while gameloop:
     elif ship.pos.y < 0:
         ship.pos.y = HEIGHT
 
+    manager.activate_hittimer()
+    #print(manager.hit_cd)
+    print(ship.hits)
     
     clock.tick(30)
     pygame.display.flip()
