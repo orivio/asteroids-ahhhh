@@ -31,6 +31,7 @@ class spaceship:
         self.accel = 0.15
         self.drag = 0.99
         self.speedlim = 6
+        self.hits = 10
 
     def forward(self):
         return pygame.math.Vector2(0, -1).rotate(self.angle)
@@ -117,8 +118,6 @@ class bullet:
         self.pos += self.vec
         if mgnr.bull_cd == 0:
             pass
-        #elif bullet.bull_cd <= 0:
-         #   bullet.bull_cd = -1
         
 asteroids = [asteroid(), asteroid(), asteroid(), asteroid(), asteroid(), asteroid()]
 enemies = [square_alien(100, 200)]
@@ -129,6 +128,7 @@ manager = GameManager()
 gameloop = True
 
 while gameloop:
+    print(ship.hits)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameloop = False
@@ -141,7 +141,6 @@ while gameloop:
     if keys[pygame.K_RIGHT]:
         ship.angle += 5
     if keys[pygame.K_f]:
-        print (manager.bull_cd)
         if manager.bull_cd <= 0:
             bullets.append(bullet(ship))
             manager.bull_reset()
@@ -159,6 +158,10 @@ while gameloop:
             ast.vecmove.x *= -1 
         if ast.vec.y + ast.radius > 400 or 0 > ast.vec.y - ast.radius:
             ast.vecmove.y *= -1
+
+        pos_dif = ship.pos - ast.vec
+        if pos_dif.length() <= ast.radius + ship.hitbox.width:
+            ship.hits -= 1
 
         for bull in bullets:
             dif = ast.vec - bull.pos
@@ -178,7 +181,10 @@ while gameloop:
 
     for enemy in enemies:
         enemy.track(ship)
-        pygame.draw.rect(screen, ((88, 149, 173)), (enemy.pos.x - 30, enemy.pos.y - 30, 30, 30))
+        guy = pygame.Rect(enemy.pos.x - 30, enemy.pos.y - 30, 30, 30)
+        pygame.draw.rect(screen, ((88, 149, 173)), guy)
+        if guy.colliderect(ship.hitbox):
+            ship.hits -= 1
 
     for bull in bullets:
         bull.update(manager)
