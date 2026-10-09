@@ -110,8 +110,6 @@ class GameManager:
         self.hit_cd -= 1
     def bull_zero(self):
         self.bull_cd = 0
-    def hit_zero(self):
-        self.hit_cd = 0
     def bull_reset(self):
         self.bull_cd = 10
     def hit_reset(self):
@@ -211,9 +209,11 @@ while gameloop:
     elif ship.pos.y < 0:
         ship.pos.y = HEIGHT
 
+    font = pygame.font.Font(None, 48)
+    font_render = font.render(f"Lives: {ship.hits}", True, (255, 255, 255))
+    screen.blit(font_render, (10, 10))
+
     manager.activate_hittimer()
-    #print(manager.hit_cd)
-    print(ship.hits)
     
     clock.tick(30)
     pygame.display.flip()
