@@ -31,7 +31,7 @@ class spaceship:
         self.accel = 0.15
         self.drag = 0.99
         self.speedlim = 6
-        self.hits = 10
+        self.hits = 3
 
     def forward(self):
         return pygame.math.Vector2(0, -1).rotate(self.angle)
@@ -209,11 +209,19 @@ while gameloop:
     elif ship.pos.y < 0:
         ship.pos.y = HEIGHT
 
-    font = pygame.font.Font(None, 48)
-    font_render = font.render(f"Lives: {ship.hits}", True, (255, 255, 255))
-    screen.blit(font_render, (10, 10))
 
     manager.activate_hittimer()
+
+    if ship.hits <= 0:
+        font_render = font.render("GAME OVER", True, (255, 255, 255))
+        screen.blit(font_render, (WIDTH/2 - 100, HEIGHT/2 - 20))
+        temp = clock.get_time()
+        if clock.get_time() - temp >= 3:
+            pygame.quit()
+    else:
+        font = pygame.font.Font(None, 48)
+        font_render = font.render(f"Lives: {ship.hits}", True, (255, 255, 255))
+        screen.blit(font_render, (10, 10))
     
     clock.tick(30)
     pygame.display.flip()
